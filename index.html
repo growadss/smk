@@ -202,16 +202,8 @@ src="https://www.facebook.com/tr?id=1801315857677401&ev=PageView&noscript=1"></n
     cta.addEventListener(ev,function(e){ if(e.isTrusted) touched=true; },{passive:true});
   });
 
-  // ---- Telegram app seedha kholne ki koshish (tg://), na khule to t.me ----
-  function tgDeepLink(u){
-    var m=u.match(/t\.me\/(?:joinchat\/|\+)([\w-]+)/); if(m) return "tg://join?invite="+m[1];
-    m=u.match(/t\.me\/([A-Za-z0-9_]{4,})/); if(m) return "tg://resolve?domain="+m[1];
-    return null;
-  }
-  function openTelegram(){
-    var deep=tgDeepLink(TELEGRAM_LINK);
-    window.location.href = deep || TELEGRAM_LINK;              // Telegram app seedha (koi auto-fallback nahi)
-  }
+  // ---- Telegram link kholna ----
+  function openTelegram(){ window.location.href=TELEGRAM_LINK; }
 
   // ---- Join hint popup ----
   var jh=document.getElementById("joinHint");

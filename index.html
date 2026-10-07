@@ -227,7 +227,7 @@ src="https://www.facebook.com/tr?id=1801315857677401&ev=PageView&noscript=1"></n
       if(window.fbq) fbq('track','Subscribe',{},{eventID:eventId});   // sirf pehli baar
       if(!TEST_MODE) markSubscribed();   // test mode me yaad nahi rakhta, baar-baar test kar sako
     }
-    setTimeout(openTelegram, TEST_MODE ? 1500 : 1000);   // 1 sec: user popup padh le
+    setTimeout(openTelegram, 1500);   // 1.5 sec: user popup padh le
   });
 
   // Back button se wapas aaye to button phir kaam kare

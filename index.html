@@ -175,7 +175,6 @@ src="https://www.facebook.com/tr?id=1801315857677401&ev=PageView&noscript=1"></n
     <div class="jh-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#229ED9"/><path d="M5.5 11.8l11.6-4.5c.5-.2 1 .1.8.9l-2 9.3c-.1.6-.5.8-1 .5l-3-2.2-1.4 1.4c-.2.2-.3.3-.6.3l.2-3.1 5.6-5.1c.2-.2 0-.3-.4-.1l-6.9 4.4-3-.9c-.6-.2-.6-.6.1-.9z" fill="#fff"/></svg></div>
     <p class="jh-t">Tap <b>“Continue”</b> to join Telegram</p>
     <p class="jh-s">ടെലിഗ്രാമിൽ ചേരാൻ “Continue” അമർത്തുക</p>
-    <a class="jh-btn" id="jhGo" href="#">Continue</a>
     <p class="jh-n"><span class="jh-sp"></span> Opening Telegram…</p>
   </div>
 </div>
@@ -209,32 +208,20 @@ src="https://www.facebook.com/tr?id=1801315857677401&ev=PageView&noscript=1"></n
     m=u.match(/t\.me\/([A-Za-z0-9_]{4,})/); if(m) return "tg://resolve?domain="+m[1];
     return null;
   }
-  var fbTimer=null;
   function openTelegram(){
     var deep=tgDeepLink(TELEGRAM_LINK);
-    if(!deep){ window.location.href=TELEGRAM_LINK; return; }
-    var left=false;
-    function onHide(){ if(document.hidden){ left=true; clearTimeout(fbTimer); } }
-    document.addEventListener("visibilitychange",onHide);
-    window.location.href=deep;                                   // Telegram app khulega (agar installed hai)
-    // Instagram/Facebook ke andar "Continue" dialog aata hai – wahan auto-fallback nahi,
-    // user aaram se Continue dabaye (zaroorat ho to popup ka Continue button backup hai)
-    if(/Instagram|FBAN|FBAV|FB_IAB|FBIOS|FB4A/i.test(navigator.userAgent||"")) return;
-    fbTimer=setTimeout(function(){                               // app nahi khula to web link
-      document.removeEventListener("visibilitychange",onHide);
-      if(!left && !document.hidden) window.location.href=TELEGRAM_LINK;
-    },1200);
+    window.location.href = deep || TELEGRAM_LINK;              // Telegram app seedha (koi auto-fallback nahi)
   }
 
   // ---- Join hint popup ----
   var jh=document.getElementById("joinHint");
   function showJoinHint(){ if(jh) jh.hidden=false; }
-  function hideJoinHint(){ if(jh) jh.hidden=true; }
+  function hideJoinHint(){ if(jh) jh.hidden=true; fired=false; }   // band karne par CTA dobara dab sakta hai
   if(jh){
     document.getElementById("jhClose").addEventListener("click",hideJoinHint);
-    document.getElementById("jhGo").addEventListener("click",function(e){ e.preventDefault(); window.location.href=TELEGRAM_LINK; });
   }
   window.addEventListener("pageshow",function(e){ if(e.persisted) hideJoinHint(); });
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden && jh && !jh.hidden) hideJoinHint(); });
 
   cta.addEventListener("click",function(e){
     e.preventDefault();
@@ -252,7 +239,7 @@ src="https://www.facebook.com/tr?id=1801315857677401&ev=PageView&noscript=1"></n
   });
 
   // Back button se wapas aaye to button phir kaam kare
-  window.addEventListener("pageshow",function(e){ if(e.persisted){ fired=false; clearTimeout(fbTimer); } });
+  window.addEventListener("pageshow",function(e){ if(e.persisted) fired=false; });
 
   // ---- Test mode badge ----
   function testMsg(t){ var b=document.getElementById("tbadge"); if(b) b.textContent="TEST MODE · "+t; }
